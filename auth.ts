@@ -1,32 +1,37 @@
-// Import required modules
 import authServices from "@/services/auth.services";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-// Configure NextAuth
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // Use JWT strategy for sessions
   session: {
     strategy: "jwt",
   },
-  // Define callbacks for JWT and session management
   callbacks: {
-    jwt({ token, user }: any) {
-      console.log(token, user, "jwt");
-      if (user) {
-        token.jwt = user.jwt;
+    jwt({ trigger, token, user }: any) {
+      if (trigger == "signIn") {
+        if (user) {
+          token.id = user.id;
+          token.jwt = user.jwt;
+          token.username = user.username;
+          token.email = user.email;
+          token.firstName = user.firstName;
+          token.lastName = user.lastName;
+        }
       }
       return token;
     },
-    session({ session, token }: any) {
+    async session({ session, token }: any) {
       console.log(token, "session");
+      session.id = token.id;
       session.jwt = token.jwt;
+      session.username = token.username;
+      session.email = token.email;
+      session.firstName = token.firstName;
+      session.lastName = token.lastName;
       return session;
     },
   },
-  // Define providers for authentication
   providers: [
-    // Custom credentials provider
     Credentials({
       id: "credentials",
       name: "Credentials",
@@ -44,7 +49,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const user: any = await authServices.login(data);
           console.log(user);
           if (user && user.jwt) {
-            return { id: user.id, jwt: user.jwt }; // Return the user object along with the token
+            console.log(user);
+
+            return {
+              id: user.user.id,
+              jwt: user.jwt,
+              username: user.user.username,
+              email: user.user.email,
+              firstName: user.user.first_name,
+              lastName: user.user.last_name,
+            };
           } else {
             throw new Error("Invalid credentials");
           }

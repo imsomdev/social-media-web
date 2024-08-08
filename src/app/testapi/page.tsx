@@ -7,7 +7,7 @@ import React from "react";
 const FriendRequestsPage = () => {
   const user = useSession();
   const { data, isLoading, error } = useQuery({
-    queryKey: ["friendRequests"],
+    queryKey: ["friend-requests"],
     queryFn: () => friendrequestServices.getFriendList(),
   });
   console.log(user, "User");

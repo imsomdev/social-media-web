@@ -14,9 +14,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
 import authServices from "@/services/auth.services";
-import axios from "axios";
 import { signIn } from "next-auth/react";
 
 const SIGNUP_CONSTANTS = {
@@ -55,38 +53,21 @@ const Login = () => {
     },
   });
 
-  // const fetchCsrfToken = async () => {
-  //   const response = await axios.get("http://localhost:3000/api/auth/csrf");
-  //   return response.data.csrfToken;
-  // };
-
-  const loginMutation = useMutation({
-    mutationFn: async (data: any) => {
-      // const csrfToken = await fetchCsrfToken();
-      return axios.post("http://localhost:3000/api/auth/signin", data, {
-        headers: {
-          "Content-Type": "application/json",
-          // "X-CSRF-Token": csrfToken,
-        },
+  const onSubmit = async (data: any) => {
+    try {
+      const user: any = await authServices.login({
+        username: data.username,
+        password: data.password,
       });
-    },
-  });
 
-  async function loginHandler(username: string, password: string) {
-    await signIn("credentials", {
-      username,
-      password,
-      callbackUrl: "http://localhost:3000",
-    });
-  }
-
-  const onSubmit = (data: any) => {
-    // const transformedData = {
-    //   username: data.username,
-    //   password: data.password,
-    // };
-    // loginMutation.mutate(transformedData);
-    loginHandler(data.username, data.password);
+      await signIn("credentials", {
+        username: data.username,
+        password: data.password,
+        callbackUrl: "http://localhost:3000",
+      });
+    } catch (error: any) {
+      console.log(error.message, "from login");
+    }
   };
 
   return (

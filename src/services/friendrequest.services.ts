@@ -38,5 +38,16 @@ const friendrequestServices = {
       throw new Error("Something went wrong. Please try again.");
     }
   },
+  getSendFriendRequestList: async () => {
+    try {
+      const res = await axiosApi.get("/friend-request/send");
+      return res.data;
+    } catch (error: any) {
+      if (isAxiosError(error)) {
+        throw new Error(error.response?.data.message);
+      }
+      throw new Error("Something went wrong. Please try again.");
+    }
+  },
 };
 export default friendrequestServices;

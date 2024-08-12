@@ -4,6 +4,7 @@ import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import { SessionProvider } from "next-auth/react";
 
 import "./globals.css";
+import Navbar from "@/components/navbar/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +22,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ReactQueryProvider>
-          <SessionProvider>{children}</SessionProvider>
+          <SessionProvider>
+            <Navbar />
+            {children}
+          </SessionProvider>
         </ReactQueryProvider>
       </body>
     </html>

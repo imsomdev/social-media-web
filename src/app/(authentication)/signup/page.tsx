@@ -108,52 +108,60 @@ const Signup = () => {
   };
 
   return (
-    <Card className="w-[350px]">
-      <CardHeader>
-        <CardTitle>Signup</CardTitle>
-        <CardDescription>Create a new account</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid w-full items-center gap-4">
-            {Object.entries(SIGNUP_CONSTANTS).map(([label, placeholder]) => {
-              const fieldName = label
-                .toLowerCase()
-                .replace(/ /g, "_")
-                .replace("first_name", "firstName")
-                .replace("last_name", "lastName")
-                .replace(
-                  "confirm_password",
-                  "confirmPassword"
-                ) as keyof z.infer<typeof SignUpSchema>;
+    <div className="flex h-screen items-center justify-center">
+      <Card className="w-[350px]">
+        <CardHeader>
+          <CardTitle>Signup</CardTitle>
+          <CardDescription>Create a new account</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="grid w-full items-center gap-4">
+              {Object.entries(SIGNUP_CONSTANTS).map(([label, placeholder]) => {
+                const fieldName = label
+                  .toLowerCase()
+                  .replace(/ /g, "_")
+                  .replace("first_name", "firstName")
+                  .replace("last_name", "lastName")
+                  .replace(
+                    "confirm_password",
+                    "confirmPassword"
+                  ) as keyof z.infer<typeof SignUpSchema>;
 
-              return (
-                <div key={label} className="flex flex-col space-y-1.5">
-                  <Label htmlFor={fieldName}>{label}</Label>
-                  <Input
-                    id={fieldName}
-                    placeholder={placeholder}
-                    type={label.includes("Password") ? "password" : "text"}
-                    {...register(fieldName)}
-                  />
-                  {errors[fieldName] && (
-                    <p className="text-red-500 text-sm">
-                      {errors[fieldName]?.message as string}
-                    </p>
-                  )}
-                </div>
-              );
-            })}
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" type="button">
-                Cancel
-              </Button>
-              <Button type="submit">Signup</Button>
-            </CardFooter>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+                return (
+                  <div key={label} className="flex flex-col space-y-1.5">
+                    <Label htmlFor={fieldName}>{label}</Label>
+                    <Input
+                      id={fieldName}
+                      placeholder={placeholder}
+                      type={label.includes("Password") ? "password" : "text"}
+                      {...register(fieldName)}
+                    />
+                    {errors[fieldName] && (
+                      <p className="text-red-500 text-sm">
+                        {errors[fieldName]?.message as string}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+              <CardFooter className="flex justify-between">
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => {
+                    window.location.href = "/login";
+                  }}
+                >
+                  Login
+                </Button>
+                <Button type="submit">Signup</Button>
+              </CardFooter>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

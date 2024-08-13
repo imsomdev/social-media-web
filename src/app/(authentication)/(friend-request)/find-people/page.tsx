@@ -3,18 +3,10 @@ import { Button } from "@/components/ui/button";
 import friendrequestServices from "@/services/friendrequest.services";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SendFriendRequest from "@/components/sendFriendRequest/SendFriendRequest";
+import GetFriendRequest from "@/components/getFriendRequest/GetFriendRequest";
+import AllFriends from "@/components/allFriends/AllFriends";
 
 const FindPeople = () => {
   const [requestStatus, setRequestStatus] = useState<Record<number, string>>(
@@ -40,8 +32,21 @@ const FindPeople = () => {
     },
   });
 
+  const CancelFriendRequestMutation = useMutation({
+    mutationFn: (data: any) => friendrequestServices.cancelFriendRequest(data),
+    onSuccess: (res: any) => {
+      console.log(res, "success");
+    },
+    onError: (error: any) => {
+      console.log(error);
+    },
+  });
+
   const handleSendFriendRequest = (userId: number) => {
     SendFriendRequestMutation.mutate({ to_user: userId });
+  };
+  const handleCancelFriendRequest = (userId: number) => {
+    CancelFriendRequestMutation.mutate({ to_user: userId });
   };
 
   const capitalizeFirstLetter = (name: string) => {
@@ -52,10 +57,6 @@ const FindPeople = () => {
     return <div>Error fetching users.</div>;
   }
 
-  if (data?.length === 0) {
-    return <div>No users found.</div>;
-  }
-
   return (
     <div>
       <Tabs defaultValue="Find people">
@@ -63,7 +64,7 @@ const FindPeople = () => {
           <TabsTrigger value="Find people">Find people</TabsTrigger>
           <TabsTrigger value="Friend requests">Friend requests</TabsTrigger>
           <TabsTrigger value="Sent requests">Sent requests</TabsTrigger>
-          <TabsTrigger value="Your Friends">Your Friends</TabsTrigger>
+          <TabsTrigger value="All Friends">All Friends</TabsTrigger>
         </TabsList>
         <TabsContent value="Find people">
           {data &&
@@ -75,7 +76,7 @@ const FindPeople = () => {
                   variant={"ghost"}
                   onClick={() =>
                     requestStatus[people.id] === "sent"
-                      ? console.log("Cancel request function here")
+                      ? handleCancelFriendRequest(people.id)
                       : handleSendFriendRequest(people.id)
                   }
                 >
@@ -85,12 +86,17 @@ const FindPeople = () => {
                 </Button>
               </div>
             ))}
+          {data?.length === 0 && "wow! thereis no one for you"}
         </TabsContent>
-        <TabsContent value="Friend requests"></TabsContent>
+        <TabsContent value="Friend requests">
+          <GetFriendRequest />
+        </TabsContent>
         <TabsContent value="Sent requests">
           <SendFriendRequest />
         </TabsContent>
-        <TabsContent value="Your Friends"></TabsContent>
+        <TabsContent value="All Friends">
+          <AllFriends />
+        </TabsContent>
       </Tabs>
     </div>
   );

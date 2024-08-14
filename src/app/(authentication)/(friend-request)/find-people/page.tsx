@@ -7,56 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SendFriendRequest from "@/components/sendFriendRequest/SendFriendRequest";
 import GetFriendRequest from "@/components/getFriendRequest/GetFriendRequest";
 import AllFriends from "@/components/allFriends/AllFriends";
+import Suggestion from "@/components/suggestedFriend/Suggestion";
 
 const FindPeople = () => {
-  const [requestStatus, setRequestStatus] = useState<Record<number, string>>(
-    {}
-  );
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["find-people"],
-    queryFn: () => friendrequestServices.getAllUsersDetails(),
-  });
-
-  const SendFriendRequestMutation = useMutation({
-    mutationFn: (userId: any) =>
-      friendrequestServices.sendFriendRequest(userId),
-    onSuccess: (res: any, variables: any) => {
-      console.log(res, "success");
-      setRequestStatus((prevStatus) => ({
-        ...prevStatus,
-        [variables.to_user]: "sent",
-      }));
-    },
-    onError: (error: any) => {
-      console.error(error, "error");
-    },
-  });
-
-  const CancelFriendRequestMutation = useMutation({
-    mutationFn: (data: any) => friendrequestServices.cancelFriendRequest(data),
-    onSuccess: (res: any) => {
-      console.log(res, "success");
-    },
-    onError: (error: any) => {
-      console.log(error);
-    },
-  });
-
-  const handleSendFriendRequest = (userId: number) => {
-    SendFriendRequestMutation.mutate({ to_user: userId });
-  };
-  const handleCancelFriendRequest = (userId: number) => {
-    CancelFriendRequestMutation.mutate({ to_user: userId });
-  };
-
-  const capitalizeFirstLetter = (name: string) => {
-    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-  };
-
-  if (isError) {
-    return <div>Error fetching users.</div>;
-  }
-
   return (
     <div>
       <Tabs defaultValue="Find people">
@@ -67,26 +20,7 @@ const FindPeople = () => {
           <TabsTrigger value="All Friends">All Friends</TabsTrigger>
         </TabsList>
         <TabsContent value="Find people">
-          {data &&
-            data.map((people: any) => (
-              <div key={people.id}>
-                {capitalizeFirstLetter(people.first_name)}{" "}
-                {capitalizeFirstLetter(people.last_name)}
-                <Button
-                  variant={"ghost"}
-                  onClick={() =>
-                    requestStatus[people.id] === "sent"
-                      ? handleCancelFriendRequest(people.id)
-                      : handleSendFriendRequest(people.id)
-                  }
-                >
-                  {requestStatus[people.id] === "sent"
-                    ? "Cancel Request"
-                    : "Send Friend Request"}
-                </Button>
-              </div>
-            ))}
-          {data?.length === 0 && "wow! thereis no one for you"}
+          <Suggestion />
         </TabsContent>
         <TabsContent value="Friend requests">
           <GetFriendRequest />

@@ -109,7 +109,7 @@ const Signup = () => {
     signUpMuation.mutate(transformedData);
   };
   const onLoginPress = () => {
-    router.push("/login");
+    router.replace("/login");
   };
 
   return (

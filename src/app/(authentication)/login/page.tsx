@@ -16,6 +16,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import authServices from "@/services/auth.services";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const SIGNUP_CONSTANTS = {
   Username: "Enter your username",
@@ -41,6 +42,7 @@ const LoginSchema = z.object({
 });
 
 const Login = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -68,6 +70,9 @@ const Login = () => {
     } catch (error: any) {
       console.log(error.message, "from login");
     }
+  };
+  const onSignupPress = () => {
+    router.replace("/signup");
   };
 
   return (
@@ -109,13 +114,7 @@ const Login = () => {
                 );
               })}
               <CardFooter className="flex justify-between">
-                <Button
-                  variant="outline"
-                  type="button"
-                  onClick={() => {
-                    window.location.href = "/signup";
-                  }}
-                >
+                <Button variant="outline" type="button" onClick={onSignupPress}>
                   Signup
                 </Button>
                 <Button type="submit">Login</Button>

@@ -16,6 +16,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import authServices from "@/services/auth.services";
+import { useRouter } from "next/navigation";
 
 const SIGNUP_CONSTANTS = {
   "First Name": "Enter your first name",
@@ -72,6 +73,7 @@ const SignUpSchema = z
   });
 
 const Signup = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -105,6 +107,9 @@ const Signup = () => {
       confirm_password: data.confirmPassword,
     };
     signUpMuation.mutate(transformedData);
+  };
+  const onLoginPress = () => {
+    router.push("/login");
   };
 
   return (
@@ -146,13 +151,7 @@ const Signup = () => {
                 );
               })}
               <CardFooter className="flex justify-between">
-                <Button
-                  variant="outline"
-                  type="button"
-                  onClick={() => {
-                    window.location.href = "/login";
-                  }}
-                >
+                <Button variant="outline" type="button" onClick={onLoginPress}>
                   Login
                 </Button>
                 <Button type="submit">Signup</Button>

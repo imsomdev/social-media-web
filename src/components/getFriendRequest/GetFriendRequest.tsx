@@ -1,9 +1,10 @@
 import friendrequestServices from "@/services/friendrequest.services";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { Button } from "../ui/button";
 
 const GetFriendRequest = () => {
+  const queryClient = useQueryClient();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["getFriendRequest"],
     queryFn: () => friendrequestServices.getFriendRequestList(),
@@ -15,7 +16,10 @@ const GetFriendRequest = () => {
 
   const FreindRequestActionMutation = useMutation({
     mutationFn: (data: any) => friendrequestServices.friendRequestAction(data),
-    onSuccess: () => {},
+    onSuccess: () => {
+      console.log("cancelled");
+      queryClient.invalidateQueries({ queryKey: ["getFriendRequest"] });
+    },
     onError: (error) => {
       console.error("Error accepting friend request", error);
     },

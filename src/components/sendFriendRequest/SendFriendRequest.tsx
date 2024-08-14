@@ -1,9 +1,10 @@
 import friendrequestServices from "@/services/friendrequest.services";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import { Button } from "../ui/button";
 
 const SendFriendRequest = () => {
+  const queryClient = useQueryClient();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["sendFriendRequest"],
     queryFn: () => friendrequestServices.getSendFriendRequestList(),
@@ -13,6 +14,7 @@ const SendFriendRequest = () => {
     mutationFn: (data: any) => friendrequestServices.cancelFriendRequest(data),
     onSuccess: (res: any, variables: any) => {
       console.log(res, "success");
+      queryClient.invalidateQueries({ queryKey: ["sendFriendRequest"] });
     },
     onError: (error: any) => {
       console.log(error);

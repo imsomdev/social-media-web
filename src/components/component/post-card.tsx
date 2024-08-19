@@ -7,13 +7,6 @@ import {
 } from "@/components/ui/card";
 import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
@@ -25,7 +18,6 @@ export function PostCard() {
     queryKey: ["post-card"],
     queryFn: () => postServices.getPostData(),
   });
-  console.log(data);
   return (
     <div className="flex flex-col items-center gap-4">
       {data &&
@@ -44,7 +36,7 @@ export function PostCard() {
                 {post?.username}
               </Link>
               <div className="ml-auto">
-                <PostCardDropdown />
+                <PostCardDropdown ownerId={post?.user} postId={post?.id} />
               </div>
             </CardHeader>
             <CardContent className="px-4 py-2">

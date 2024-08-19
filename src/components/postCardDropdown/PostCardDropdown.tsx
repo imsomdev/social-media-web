@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   DropdownMenu,
@@ -7,7 +8,26 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "../ui/button";
-const PostCardDropdown = () => {
+import { useSession } from "next-auth/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import postServices from "@/services/post.services";
+const PostCardDropdown = ({ ownerId, postId }: any) => {
+  const session: any = useSession();
+  const queryClient = useQueryClient();
+  const userId = session.data?.id;
+  const deletePostMutation = useMutation({
+    mutationFn: (postId: any) => postServices.deletePost(postId),
+    onSuccess: (res: any) => {
+      queryClient.invalidateQueries({ queryKey: ["post-card"] });
+    },
+    onError: () => console.error("Error deleting post"),
+  });
+  const handleDelete = () => {
+    deletePostMutation.mutate({ post_id: postId });
+  };
+  const handleReport = () => {
+    console.log("post reported");
+  };
   return (
     <div>
       <DropdownMenu>
@@ -30,10 +50,17 @@ const PostCardDropdown = () => {
             Add to favorites
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
-            <FileWarningIcon className="w-4 h-4 mr-2" />
-            Report
-          </DropdownMenuItem>
+          {ownerId === userId ? (
+            <DropdownMenuItem onClick={handleDelete}>
+              <FileWarningIcon className="w-4 h-4 mr-2" />
+              Delete
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem onClick={handleReport}>
+              <FileWarningIcon className="w-4 h-4 mr-2" />
+              Report
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

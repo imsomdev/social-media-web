@@ -24,6 +24,17 @@ const postServices = {
       throw new Error("Something went wrong. Please try again.");
     }
   },
+  deletePost: async (postId: any) => {
+    try {
+      const res = await axiosApi.post("/delete-post", postId);
+      return res.data;
+    } catch (error: any) {
+      if (isAxiosError(error)) {
+        throw new Error(error.response?.data.message);
+      }
+      throw new Error("Something went wrong. Please try again.");
+    }
+  },
 };
 
 export default postServices;

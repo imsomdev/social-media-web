@@ -32,11 +32,11 @@ export default function Navbar() {
           Services
         </Link>
         <Link
-          href="#"
+          href="/find-people"
           className="text-lg font-medium hover:underline underline-offset-4"
           prefetch={false}
         >
-          Portfolio
+          Find people
         </Link>
         <Link
           href="/login"
